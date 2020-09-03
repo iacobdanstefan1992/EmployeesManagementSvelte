@@ -1,104 +1,152 @@
-<script>
+<script>	
+	import ActionButton from "./components/ActionButton.svelte";
+	import EmployeeList from "./components/EmployeeList.svelte";
+	import AddEditEmployee from "./components/AddEditEmployee.svelte";
 	import repositories from "./repository";
-	const employees = repositories.employees.getAll();
-
-	function formatDate(date) {		
-		if (date === null) {
-			return "–";
-		}
-
-		return date.toLocaleDateString();
+	import Header from "./components/Header.svelte";
+	import Footer from "./components/Footer.svelte";
+	
+	//const employees = repositories.employees.getAll();
+	let employees = [];
+	let departments = [];
+	let jobCategories = [];
+	let loadDataPromise;
+	function refreshEmployeeList() {
+		loadDataPromise = new Promise((resolve, reject) => {
+			const employeePromise = repositories.employees.getAll()
+				.then((employeesResult) => {
+					employees = employeesResult;
+				});
+			const departmentsPromise = repositories.departments.getAll()
+				.then((departmentsResult) => {
+					departments = departmentsResult;
+				});
+			const jobCategoriesPromise = repositories.jobCategories.getAll()
+				.then((jobCategoriesResult) => {
+					jobCategories = jobCategoriesResult;
+				})
+			Promise.all([ employeePromise, departmentsPromise, jobCategoriesPromise ]).then(() => {
+				resolve();
+			}).catch(() => {
+				reject();
+			});
+		});
 	}
-
-	function formatBoolean(bool) {
-		if (bool) {
-			return "Yes";
+	
+	refreshEmployeeList();
+	let showModal = false;
+	let selectedEmployee;	
+	function onEmployeeClicked(e) {
+		const employeeId = e.detail.employee.id;
+		repositories.employees.get(employeeId).then((employee) => {
+			console.log(employee);
+			selectedEmployee = employee;			
+			showModal = true;			
+		});			
+	}
+	function onModalClosed() {
+		showModal = false;
+		employees = employees;
+	}
+	
+	function onModalSubmitted() {
+		const onComplete = () => {
+			refreshEmployeeList();
+			showModal = false;
+		};
+		const employee = Object.assign({}, selectedEmployee);
+		employee.birthday = new Date(employee.birthday);
+		employee.startDate = new Date(employee.startDate);
+		if (employee.endDate.length > 0) {
+			employee.endDate = new Date(employee.endDate);
 		} else {
-			return "No";
+			employee.endDate = null;
+		}
+		if (!employee.id) {
+			repositories.employees.add(employee).then(onComplete);
+		} else {
+			repositories.employees.update(employee.id, employee).then(onComplete);
 		}
 	}
-
-	console.log(employees);
+	function onEmployeeDelete() {		
+		if (!confirm("Are you sure to delete the selected employee?")) {
+			return;
+		}
+		repositories.employees.delete(selectedEmployee.id).then(() => {
+			refreshEmployeeList();
+			showModal = false;
+		});
+	}
+	function onAddButtonPressed() {
+		selectedEmployee = {
+			address: "",
+			birthday: undefined,
+			email: "",
+			endDate: undefined,
+			firstName: "",
+			hasDrivingLicense: false,
+			id: undefined,
+			isActive: true,
+			ifFemale: true,
+			isManager: false,
+			lastName: "",
+			noChildren: 0,
+			postalCode: "",
+			salary: 0,
+			socialSecurityNumber: "",
+			startDate: undefined,
+			studies: "",
+			telephone: ""
+		};
+		showModal = true;
+	}
 </script>
 
 <div class="content-wrapper">
-	<header>
-		<h1>EmployeeManagement</h1>
-	</header>	
+	<Header></Header>	
 
-	<div class="employees-list">
-		<table>
-			<thead>
-				<tr>
-					<th>First Name</th>
-					<th>Last Name</th>
-					<th>Department</th>
-					<th>Position</th>
-					<th>Start Date</th>
-					<th>End Date</th>
-					<th class="centered">Manager</th>
-					<th class="centered">Active</th>
-				</tr>
-			</thead>
-	
-			<tbody>
-				{#each employees as employee}
-					<tr>
-						<td>{employee.firstName}</td>
-						<td>{employee.lastName}</td>
-						<td>&ndash;</td>
-						<td>&ndash;</td>
-						<td>{formatDate(employee.startDate)}</td>
-						<td>{formatDate(employee.endDate)}</td>
-						<td class="centered">{formatBoolean(employee.isManager)}</td>
-						<td class="centered">{formatBoolean(employee.isActive)}</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+	<div class="card">
+		{#await loadDataPromise}
+		<div class="loading">
+			Loading...
+		</div>
+		{:then}
+		<EmployeeList employees={employees} {departments} {jobCategories} on:click="{onEmployeeClicked}" />
+		{:catch}
+		Error while loading.
+		{/await}
 	</div>
 
-	<footer>
-		&copy; 2020 The Trainees at Ausy Technologies Romania.<br />
-		Icons provided by Icons8. Powered by Svelte.
-	</footer>
+	<Footer></Footer>
 </div>
 
+<ActionButton on:click={onAddButtonPressed} />
+
+{#if showModal}
+<AddEditEmployee {selectedEmployee} {departments} {jobCategories} on:close={onModalClosed} on:submit={onModalSubmitted} on:delete={onEmployeeDelete} />
+{/if}
 
 <style>
-	header {
-		color: white;
-	}
-
+	
 	.content-wrapper {
-		overflow: hidden;
 		width: 920px;
 		margin: 0 auto;
 	}
 
-	.employees-list table {
+	.card {
 		background-color: white;
-		width: 100%;
+		box-shadow: 0 0 16px rgba(0, 0, 0, 0.5);
+		border-radius: 5px;
 	}
-
-	.employees-list table th {
-		color: rgb(57, 66, 91);
-		text-transform: uppercase;
-		text-align: left;
-	}
-
-	.employees-list table th,
-	.employees-list table td {
-		padding: 0.5em;
-	}
-
-	.employees-list .centered {
+	.card .loading {
+		padding: 4em;
 		text-align: center;
-	}
-
-	footer {
-		font-size: 0.8em;
-		color: rgb(205, 207, 214);
-		margin-top: 2em;
+		background: repeating-linear-gradient(
+			45deg,
+			transparent 0px,
+			transparent 15px,
+			rgba(0, 0, 0, 0.1) 15px,
+			rgba(0, 0, 0, 0.1) 30px
+		);
 	}
 </style>

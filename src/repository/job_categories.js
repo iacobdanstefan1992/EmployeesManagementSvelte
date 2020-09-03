@@ -1,21 +1,25 @@
-import Repository from "./repository";
+import { get, put } from "../utils/server";
 
-export default class JobCategoriesRepository extends Repository {
+export default class JobCategoriesRepository {
 
-    constructor() {
-        super();
+    add(entity){
+        return post("/job_categories/addJobCategory",entity);
+    }
 
-        this.add({
-            name: "Software Engineer"
-        });
+    update(id, entity) {
+        return put('/job_categories/updateJobCategory/'+id, entity);
+    }
 
-        this.add({
-            name: "Tester"
-        });
+    delete(id){
+        return delete("/job_categories/deleteJobCategory/"+id)
+    }
 
-        this.add({
-            name: "HR Specialist"
-        });
+    get(id) {
+        return get("/job_categories/getJobCategoryById/"+id);
+    }
+
+    getAll() {
+        return get("/job_categories/getAllJobCategories");
     }
 
 }

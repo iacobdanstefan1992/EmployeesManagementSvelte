@@ -1,17 +1,25 @@
-import Repository from "./repository";
+import { get, put } from "../utils/server";
 
-export default class DepartmentsRepository extends Repository {
+export default class DepartmentsRepository {
 
-    constructor() {
-        super();
+	add(entity){
+		return post("/departments/addDepartment",entity);
+	}
 
-        this.add({
-            name: "Human Resources"
-        });
+	update(id, entity) {
+        return put('/departments/updateDepartment/' + id, entity);
+    }
 
-        this.add({
-            name: "Upper Management"
-        });
+    delete(id){
+    	return delete("/departments/deleteDepartment/"+id)
+    }
+
+	get(id) {
+        return get("/departments/getDepartmentById/"+id);
+    }
+
+    getAll() {
+        return get("/departments/getAllDepartments");
     }
 
 }

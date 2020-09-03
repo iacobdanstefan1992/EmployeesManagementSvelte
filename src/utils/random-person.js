@@ -1,6 +1,6 @@
 import random from "./random-utils";
 
-const STUDIES = [ "High School", "Bachelor's Degree", "Master's Degree", "Doctor's Degree", "Postdoctoral Studies" ];
+export const STUDIES = [ "High School", "Bachelor's Degree", "Master's Degree", "Doctor's Degree", "Postdoctoral Studies" ];
 
 const MALE_NAMES = [ "James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph" ];
 const FEMALE_NAMES = [ "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan" ];
@@ -34,7 +34,9 @@ function generateRandomPerson() {
         salary: random.getRandomDecimal(2400, 12000),
         studies: random.getRandomFromArray(STUDIES),
         socialSecurityNumber: getSocialSecurityNumber(isFemale),
-        hasDrivingLicense: random.getRandomBoolean()
+        hasDrivingLicense: random.getRandomBoolean(),
+        departmentId: random.getRandomNumber(1, 3),
+        positionId: random.getRandomNumber(1, 4)
     };
 }
 

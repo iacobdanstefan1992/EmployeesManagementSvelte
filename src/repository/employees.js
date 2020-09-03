@@ -1,17 +1,25 @@
-import Repository from "./repository";
-import generateRandomPerson from "../utils/random-person";
-import random from "../utils/random-utils";
+import { get, put } from "../utils/server";
 
-export default class EmployeesRepository extends Repository {
+export default class EmployeesRepository {
 
-    constructor() {
-        super();
+	add(entity){
+		return post("/employees/addEmployee",entity);
+	}
 
-        const numEmployees = random.getRandomNumber(1, 10);
-        for (let i=0; i < numEmployees; i++) {
-            const aRandomPerson = generateRandomPerson();
-            this.add(aRandomPerson);
-        }
+    update(id, entity) {
+        return put(`/employees/updateEmployee/`+id, entity);
+    }
+
+    delete(id){
+    	return delete("/employees/deleteEmployee/"+id)
+    }
+
+    get(id) {
+        return get("/employees/getEmployee/"+id);
+    }
+
+    getAll() {
+        return get("/employees/getAllEmployees");
     }
 
 }
