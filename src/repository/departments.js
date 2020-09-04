@@ -19,7 +19,7 @@ export default class DepartmentsRepository {
     }
 
     getAll() {
-        return get("/departments/getAllDepartments");
+        return get("/departments/getAllDepartmentsDTO");
     }
 
 }

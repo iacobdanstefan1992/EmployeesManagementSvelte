@@ -20,7 +20,7 @@ export function get(url) {
 export function put(url, data) {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
-
+    console.log(data);
     return new Promise((resolve, reject) => {
         fetch(getFullUrl(url), {
             method: "PUT",
@@ -29,9 +29,7 @@ export function put(url, data) {
         })
         .then((response) => {
             if (response.ok) {
-                response.json().then((json) => {
-                    resolve(json);
-                });
+                resolve();
             } else {
                 reject(response);
             }

@@ -8,10 +8,12 @@
 	let jobCategoriesMap = {};
 	$: {
 		departmentsMap = entityArrayToMap(departments);
+		console.log(departmentsMap);
+		console.log(departments);
 		jobCategoriesMap = entityArrayToMap(jobCategories);
 	}
 	function getDepartmentName(id) {
-		return (departmentsMap[id] !== undefined ? departmentsMap[id].departmentName : "-");
+		return (departmentsMap[id] !== undefined ? departmentsMap[id].name : "-");
 	}
 	function getJobCategoryName(id) {
 		return (jobCategoriesMap[id] !== undefined ? jobCategoriesMap[id].name : "-");
@@ -70,8 +72,8 @@
                 <tr on:click="{() => onEmployeeClicked(employee)}">
                     <td>{employee.firstName}</td>
                     <td>{employee.lastName}</td>
-                    <td>{employee.department}</td>
-                    <td>{employee.jobCategory}</td>
+                    <td>{getDepartmentName(employee.department)}</td>
+                    <td>{getJobCategoryName(employee.jobCategory)}</td>
                     <td>{formatDate(employee.startDate)}</td>
                     <td>{formatDate(employee.endDate)}</td>
                     

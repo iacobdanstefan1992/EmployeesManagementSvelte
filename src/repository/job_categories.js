@@ -19,7 +19,7 @@ export default class JobCategoriesRepository {
     }
 
     getAll() {
-        return get("/job_categories/getAllJobCategories");
+        return get("/job_categories/getAllJobCategoriesDTO");
     }
 
 }

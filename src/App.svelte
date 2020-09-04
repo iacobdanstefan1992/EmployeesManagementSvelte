@@ -104,7 +104,7 @@
 
 <div class="content-wrapper">
 	<Header></Header>	
-
+	
 	<div class="card">
 		{#await loadDataPromise}
 		<div class="loading">

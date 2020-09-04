@@ -82,17 +82,19 @@
 			<div class="row">
 				<label>
 					Department:
-					<select>
-						
-						<option >{selectedEmployee.department}</option>
-						
+					<select bind:value="{selectedEmployee.department}">
+						{#each departments as department}
+						<option value="{department.id}" >{department.name}</option>
+						{/each}
 					</select>
 				</label>
 
 				<label>
 					Job Category:
 					<select bind:value="{selectedEmployee.jobCategory}">
-						<option >{selectedEmployee.jobCategory}</option>
+						{#each jobCategories as jobCategory}
+						<option value="{jobCategory.id}" >{jobCategory.name}</option>
+						{/each}
 					</select>
 				</label>
 			</div>		
@@ -153,7 +155,7 @@
 
 			<div class="row three-cols">
 				<label>
-					<input type="checkbox" bind:checked="{selectedEmployee.isActive}" />
+					<input type="checkbox" bind:checked="{selectedEmployee.active}" />
 					Active
 				</label>
 
@@ -163,7 +165,7 @@
 				</label>
 
 				<label id="check2">
-					<input type="checkbox" bind:checked="{selectedEmployee.hasDrivingLicense}" />
+					<input type="checkbox" bind:checked="{selectedEmployee.hasDrivingLicence}" />
 					Has driving license
 				</label>
 			</div>

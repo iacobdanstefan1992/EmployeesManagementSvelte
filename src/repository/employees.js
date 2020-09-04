@@ -15,11 +15,11 @@ export default class EmployeesRepository {
     }
 
     get(id) {
-        return get("/employees/getEmployee/"+id);
+        return get("/employees/getEmployeeDtoById/"+id);
     }
 
     getAll() {
-        return get("/employees/getAllEmployees");
+        return get("/employees/getAllEmployeesDTO");
     }
 
 }
